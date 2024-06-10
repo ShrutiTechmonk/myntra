@@ -1,5 +1,3 @@
-// index.js
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const { PythonShell } = require('python-shell');
@@ -7,8 +5,9 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // Parses incoming requests with JSON payloads.
+app.use(bodyParser.urlencoded({ extended: true })); // Parses incoming requests with URL-encoded payloads.
+// Custom middleware to set CORS headers, allowing all origins and specific headers in requests.
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -17,17 +16,18 @@ app.use((req, res, next) => {
 
 app.get('/scrape', (req, res) => {
     const options = {
-        scriptPath: path.join(__dirname, 'scripts'),
+        scriptPath: path.join(__dirname, 'scripts'), // Specifies the directory where the Python script is located.
         args: [],
         pythonOptions: ['-u'], // unbuffered output
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'] // Configures the standard I/O streams
     };
 
     console.log("Starting Python script...");
 
+    //Creates a new instance of PythonShell 
     let pyshell = new PythonShell('myntra_scraper.py', options);
 
-    let outputMessages = [];
+    let outputMessages = []; // store messages from the Python script
 
     pyshell.on('message', (message) => {
         console.log("Python script message:", message);
